@@ -1,0 +1,3 @@
+SECRET_KEY = 'ZWxlY3RyaWNzaGVlcEB3d3cuc3RhcnVuY2xlcy5jb20='
+TOKEN_EXPIRATION = 600
+DATABASE_NAME = 'electricsheep'

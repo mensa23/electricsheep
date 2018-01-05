@@ -2,6 +2,7 @@ from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSign
 from passlib.apps import custom_app_context
 
 from electricsheep import db, app
+from setting import TOKEN_EXPIRATION
 
 
 class Player(db.Document):
@@ -15,7 +16,7 @@ class Player(db.Document):
     def verify_password(self, password):
         return custom_app_context.verify(password, self.password_hash)
 
-    def generate_auth_token(self, expiration=600):
+    def generate_auth_token(self, expiration=TOKEN_EXPIRATION):
         secret_key = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
         return secret_key.dumps({'id': str(self.id)})
 

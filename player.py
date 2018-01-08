@@ -1,14 +1,12 @@
 from datetime import datetime
 
 from flask import Blueprint, jsonify, request
-from flask_httpauth import HTTPTokenAuth
 
 from exception import PlayerUnauthorized, InvalidAccessToken
 from setting import TOKEN_EXPIRATION
+from util import auth
 
 player = Blueprint('player', __name__)
-
-auth = HTTPTokenAuth()
 
 
 @player.route('/registry', methods=['POST'])
@@ -41,18 +39,6 @@ def get_token():
 @auth.login_required
 def get_player():
     return jsonify({})
-
-
-##################################################
-# Utils
-##################################################
-@auth.verify_token
-def verify_token(token):
-    from model import Player
-    p = Player.verify_auth_token(token)
-    if not p:
-        raise InvalidAccessToken('无效的授权！')
-    return True
 
 
 ##################################################

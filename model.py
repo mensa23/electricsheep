@@ -9,6 +9,8 @@ class Player(db.Document):
     username = db.StringField(required=True, unique=True)
     password_hash = db.StringField(required=True)
     created_date = db.DateTimeField(required=True)
+    uto = db.FloatField(default=0.0)
+    mps = db.IntField(default=0)
 
     def hash_password(self, password):
         self.password_hash = custom_app_context.encrypt(password)
@@ -31,3 +33,11 @@ class Player(db.Document):
             return None  # invalid token
         player = Player.objects(id=data['id']).get()
         return player
+
+
+class Resource(db.Document):
+    name = db.StringField(required=True, unique=True)
+    description = db.StringField(required=True)
+    price_uto = db.FloatField(default=0)
+    price_mps = db.IntField(default=0)
+    level = db.IntField(default=1)

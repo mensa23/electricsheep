@@ -1,13 +1,12 @@
 from datetime import datetime
 
 from flask import Blueprint, jsonify, request
-from flask_httpauth import HTTPTokenAuth
 
-from exception import PlayerUnauthorized
+from exception import PlayerUnauthorized, InvalidAccessToken
+from setting import TOKEN_EXPIRATION
+from util import auth
 
 player = Blueprint('player', __name__)
-
-auth = HTTPTokenAuth()
 
 
 @player.route('/registry', methods=['POST'])
@@ -29,23 +28,31 @@ def get_token():
     password = request.args.get('password')
     p = Player.objects(username=username).get()
     if not p or not p.verify_password(password):
-        raise PlayerUnauthorized('获取权限失败！').to_dict()
+        raise PlayerUnauthorized('获取权限失败！')
     response = dict()
     response['access_token'] = p.generate_auth_token().decode()
-    response['expires_in'] = 600
+    response['expires_in'] = TOKEN_EXPIRATION
     return jsonify(response)
 
 
 @player.route('/players/', methods=['GET'])
 @auth.login_required
 def get_player():
-    return None
+    return jsonify({})
 
 
-@auth.verify_token
-def verify_token(token):
-    from model import Player
-    p = Player.verify_auth_token(token)
-    if not p:
-        return False
-    return True
+##################################################
+# Exception Handlers
+##################################################
+@player.errorhandler(PlayerUnauthorized)
+def handle_player_unauthorized(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response
+
+
+@player.errorhandler(InvalidAccessToken)
+def handle_invalid_token(error):
+    response = jsonify(error.to_dict())
+    response.status_code = error.status_code
+    return response

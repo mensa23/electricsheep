@@ -9,8 +9,9 @@ class Player(db.Document):
     username = db.StringField(required=True, unique=True)
     password_hash = db.StringField(required=True)
     created_date = db.DateTimeField(required=True)
-    uto = db.FloatField(default=0.0)
+    uto = db.IntField(default=0)
     mps = db.IntField(default=0)
+    health = db.DecimalField(default=100)
 
     def hash_password(self, password):
         self.password_hash = custom_app_context.encrypt(password)
@@ -36,8 +37,58 @@ class Player(db.Document):
 
 
 class Resource(db.Document):
-    name = db.StringField(required=True, unique=True)
+    key = db.StringField(required=True, unique=True)
+    name = db.StringField(required=True)
     description = db.StringField(required=True)
-    price_uto = db.FloatField(default=0)
+    price_uto = db.IntField(default=0)
+    price_mps = db.IntField(default=0)
+
+
+class Chip(db.Document):
+    key = db.StringField(required=True, unique=True)
+    name = db.StringField(required=True)
+    description = db.StringField(required=True)
+    price_uto = db.IntField(default=0)
     price_mps = db.IntField(default=0)
     level = db.IntField(default=1)
+    damage_buff = db.DecimalField(default=0)
+    shield_buff = db.DecimalField(default=0)
+
+
+class Plugin(db.Document):
+    key = db.StringField(required=True, unique=True)
+    name = db.StringField(required=True)
+    description = db.StringField(required=True)
+    price_uto = db.IntField(default=0)
+    price_mps = db.IntField(default=0)
+    level = db.IntField(default=1)
+    damage = db.DecimalField(default=0)
+    shield = db.DecimalField(default=0)
+
+
+class City(db.Document):
+    key = db.StringField(required=True, unique=True)
+    name = db.StringField(required=True)
+    force_id = db.StringField(required=True)
+    battle_ratio = db.DecimalField(default=0)
+    force_ratio = db.DictField()
+    north_city_id = db.StringField()
+    south_city_id = db.StringField()
+    west_city_id = db.StringField()
+    east_city_id = db.StringField()
+
+
+class Force(db.Document):
+    key = db.StringField(required=True, unique=True)
+    name = db.StringField(required=True)
+    description = db.StringField(required=True)
+    member = db.IntField(default=0)
+    camp_id = db.StringField(required=True)
+
+
+class Science(db.Document):
+    key = db.StringField(required=True, unique=True)
+    name = db.StringField(required=True)
+    description = db.StringField(required=True)
+    level = db.IntField(default=1)
+    anti_level = db.IntField(default=1)

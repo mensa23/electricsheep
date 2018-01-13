@@ -13,7 +13,7 @@ def player_validation(username, password):
     user_pattern = re.compile(r'^[a-zA-Z0-9_]{4,16}$')
     if not re.match(user_pattern, username):
         raise InvalidUsername('用户名不符合要求！')
-    pass_pattern = re.compile(r'[a-zA-Z0-9]{6,16}$')
+    pass_pattern = re.compile(r'^[a-zA-Z0-9]{6,16}$')
     if not re.match(pass_pattern, password):
         raise InvalidPassword('密码不符合要求！')
     from model import Player
@@ -32,7 +32,9 @@ def register():
     p = Player(username=username, created_date=datetime.utcnow())
     p.hash_password(password)
     p.save()
-    response = {'id': str(p.id), 'username': p.username}
+    response = dict()
+    response['id'] = str(p.id)
+    response['username'] = p.username
     return jsonify(response)
 
 
